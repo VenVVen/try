@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DIY Geoguessr - Free Version</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    <style>
+        #map { height: 500px; width: 100%; }
+    </style>
+</head>
+<body>
+    <h2>Click on the Map to Place Your Guess</h2>
+    <div id="map"></div>
+
+    <form id="guessForm" action="https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse" method="post">
+        <input type="hidden" name="entry.YOUR_LAT_ENTRY_ID" id="latitude">
+        <input type="hidden" name="entry.YOUR_LNG_ENTRY_ID" id="longitude">
+        <button type="button" onclick="submitGuess()">Submit Guess</button>
+    </form>
+
+    <script>
+        var map = L.map('map').setView([42.089037, -75.967993], 2); // Binghamton University coordinates
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var marker;
+
+        function onMapClick(e) {
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+
+            document.getElementById("latitude").value = e.latlng.lat;
+            document.getElementById("longitude").value = e.latlng.lng;
+        }
+
+        map.on('click', onMapClick);
+
+        function submitGuess() {
+            if (document.getElementById("latitude").value && document.getElementById("longitude").value) {
+                document.getElementById("guessForm").submit();
+            } else {
+                alert("Click on the map to place your guess before submitting.");
+            }
+        }
+    </script>
+</body>
+</html>
